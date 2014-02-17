@@ -1,8 +1,60 @@
 <?php
+class WTAIU_Theme_Panel extends WTAIU_Panel {
+
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'Theme', 'wtaiu-theme-panel', $plugin_file );
+		$this->default_open_state = 'closed';
+	}
+
+	public function get_content(){
+		$theme =  wp_get_theme();
+		$info = array();
+		do{
+			$info[] = $this->get_theme_info_html( $theme );
+			$theme = $theme->parent();
+		} while( $theme !== false );
+		// WP currently only supports child themes, not grandchild themes. This loop should run at most two times.
+		return implode( '', $info );
+	}
+
+	protected function get_theme_info_html( WP_Theme $theme ){
+
+		$name			= $theme->display('Name');
+		$version		= $theme->display('Version');
+		$description	= $theme->display('Description');
+		$desc_title		= esc_attr( $theme->get('Description') );
+		$author			= $theme->display('Author');
+		$screenshot		= $theme->get_screenshot();
+		$thumbnail_style= $screenshot !== false ? sprintf('style="background-image:url(%s);"', $screenshot ) : '';
+		$theme_url 		= network_admin_url( add_query_arg('theme', $theme->get_stylesheet(), 'themes.php') );
+
+$output=<<<OUTPUT
+
+<div class="theme-info" title="{$desc_title}">
+	<a href="{$theme_url}" class="theme-screenshot" {$thumbnail_style}></a>
+	<div class="theme-info-wrap">
+		<h3 class="theme-info-header" title="{$name}">
+		    <a href="{$theme_url}" class="theme-name">{$name}</a>
+		</h3>
+		<p class="theme-version">Version: {$version}</p>
+		<p class="theme-author">By {$author}</p>
+	</div>
+</div>
+
+OUTPUT;
+
+		return $output;
+
+	}
+
+
+}
+
+
 class WTAIU_Template_Panel extends WTAIU_Panel {
 
-	public function __construct(){
-		parent::__construct( 'Template', 'wtaiu-template-panel' );
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'Template', 'wtaiu-template-panel', $plugin_file );
 	}
 
 	public function get_content(){
@@ -16,8 +68,8 @@ class WTAIU_Template_Panel extends WTAIU_Panel {
 
 class WTAIU_General_Info_Panel extends WTAIU_Panel {
 
-	public function __construct(){
-		parent::__construct( 'General Information', 'wtaiu-general-info-panel' );
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'General Information', 'wtaiu-general-info-panel', $plugin_file );
 		$this->author		= 'Eric King';
 		$this->author_url	= 'http://webdeveric.com/';
 		$this->version		= '0.1';
@@ -69,8 +121,8 @@ class WTAIU_Additional_Files_Panel extends WTAIU_Panel {
 
 	protected $files;
 
-	public function __construct(){
-		parent::__construct( 'Additional Files Used', 'wtaiu-additional-files-panel' );
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'Additional Files Used', 'wtaiu-additional-files-panel', $plugin_file );
 		$this->files = array();
 	}
 
@@ -114,8 +166,8 @@ class WTAIU_Dynamic_Sidebar_Info_Panel extends WTAIU_Panel {
 
 	protected $sidebars;
 
-	public function __construct(){
-		parent::__construct( 'Sidebar Information', 'wtaiu-dynamic-sidebar-info-panel' );
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'Sidebar Information', 'wtaiu-dynamic-sidebar-info-panel', $plugin_file );
 		$this->sidebars = array();
 	}
 
@@ -162,8 +214,8 @@ class WTAIU_WP_Dependencies_Panel extends WTAIU_Panel {
 
 	protected $dependencies;
 
-	public function __construct( $label = 'Dependencies Used', $id = 'wtaiu-dependencies-panel' ){
-		parent::__construct( $label, $id );
+	public function __construct( $label = 'Dependencies Used', $id = 'wtaiu-dependencies-panel', $plugin_file = '' ){
+		parent::__construct( $label, $id, $plugin_file );
 		$this->dependencies = array();
 	}
 
@@ -187,8 +239,8 @@ class WTAIU_WP_Dependencies_Panel extends WTAIU_Panel {
 
 
 class WTAIU_Scripts_Panel extends WTAIU_WP_Dependencies_Panel {
-	public function __construct(){
-		parent::__construct('Enqueued Scripts', 'wtaiu-enqueued-scripts');
+	public function __construct( $plugin_file = '' ){
+		parent::__construct('Enqueued Scripts', 'wtaiu-enqueued-scripts', $plugin_file);
 	}
 
 	public function setup(){
@@ -205,8 +257,8 @@ class WTAIU_Scripts_Panel extends WTAIU_WP_Dependencies_Panel {
 
 
 class WTAIU_Styles_Panel extends WTAIU_WP_Dependencies_Panel {
-	public function __construct(){
-		parent::__construct('Enqueued Styles', 'wtaiu-enqueued-styles');
+	public function __construct( $plugin_file = '' ){
+		parent::__construct('Enqueued Styles', 'wtaiu-enqueued-styles', $plugin_file );
 	}
 
 	public function setup(){
@@ -221,26 +273,57 @@ class WTAIU_Styles_Panel extends WTAIU_WP_Dependencies_Panel {
 }
 
 
-class WTAIU_IP_Addresses_Panel extends WTAIU_Panel {
+class WTAIU_IP_Addresses_Panel extends WTAIU_Debug_Panel {
 
-	public function __construct(){
-		parent::__construct( 'IP Addresses', 'wtaiu-ip-addresses-panel' );
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'IP Addresses', 'wtaiu-ip-addresses-panel', $plugin_file );
 		$this->default_open_state = 'closed';
 	}
 
 	public function activate(){
-		$this->findPublicIP();
+		$this->find_public_ip();
 	}
 
-	public function findPublicIP(){
-		$ip_url = plugins_url( '/what-is-my-ip.php', __FILE__ );
-		$response = wp_remote_get( $ip_url );
+	public function find_public_ip(){
+		/*
+			The same script that runs ip.phplug.in is included in what-is-my-ip.php.
+			If you don't want to use my IP finding site, you can use one of these alternatives.
+				http://bot.whatismyipaddress.com/
+				http://curlmyip.com/
+				http://icanhazip.com/
+		*/
+
+		$find_public_ip_url = apply_filters('wtaiu_find_public_ip_url', 'http://ip.phplug.in/' );
+
+		$args = array(
+			'user-agent' => sprintf(
+				'WordPress/%s; What Template Am I Using/%s; %s',
+				get_bloginfo( 'version' ),
+				What_Template_Am_I_Using::VERSION,
+				get_bloginfo( 'url' )
+			)
+		); 
+
+		$response = wp_remote_get( $find_public_ip_url, $args );
 		if( ! is_wp_error( $response ) ){
 			$ip = wp_remote_retrieve_body( $response );
-			update_option( 'wtaiu-server-ip', $ip );
+			// The response body is expected to be a plain text IP address only.
+			update_site_option( 'wtaiu-server-ip', $ip );
 			return $ip;
 		}
 		return $response;
+	}
+
+	public function get_public_server_ip(){
+		$ip = get_site_option( 'wtaiu-server-ip', '' );
+		if( $ip != '' )
+			return $ip;
+
+		$ip = $this->find_public_ip();
+		if( ! is_wp_error( $ip ) )
+			return $ip;
+
+		return 'unknown';
 	}
 
 	public function deactivate(){
@@ -251,7 +334,7 @@ class WTAIU_IP_Addresses_Panel extends WTAIU_Panel {
 		$your_ip	= esc_html( $_SERVER['REMOTE_ADDR'] );
 		$server_ip	= esc_html( $_SERVER['SERVER_ADDR'] );
 		$dns_ip		= gethostbyname( $_SERVER['HTTP_HOST'] );
-		$public_server_ip = get_option( 'wtaiu-server-ip', 'unknown' );
+		$public_server_ip = $this->get_public_server_ip();
 
 $info=<<<INFO
 
@@ -284,12 +367,12 @@ INFO;
 }
 
 
-class WTAIU_Server_Info_Panel extends WTAIU_Panel {
+class WTAIU_Server_Info_Panel extends WTAIU_Debug_Panel {
 
-	const VERSION = '0.1';
+	// const VERSION = '0.1';
 
-	public function __construct(){
-		parent::__construct( 'Server Information', 'wtaiu-server-info-panel' );
+	public function __construct( $plugin_file = '' ){
+		parent::__construct( 'Server Information', 'wtaiu-server-info-panel', $plugin_file );
 		$this->default_open_state = 'closed';
 	}
 

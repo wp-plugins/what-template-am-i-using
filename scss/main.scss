@@ -1,4 +1,5 @@
 @import "compass/css3";
+@import "compass/utilities/general/clearfix";
 @import "variables";
 
 .transition-all{
@@ -51,7 +52,7 @@ html.wtaiu-closed{
 	bottom:0;
 	width:300px;
 	font:400 12px "Open Sans", sans-serif;
-	color:#333;
+	color:$main-color;
 	text-align:left;
 	-webkit-font-smoothing:antialiased;
 
@@ -102,7 +103,7 @@ html.wtaiu-closed{
 	right:0;
 
 	#wtaiu-handle{
-		background-color:#00B38A;
+		background-color:$main-green;
 		color:#FFF;
 	}
 
@@ -121,7 +122,7 @@ a#wtaiu-handle{
 	line-height:3em;
 	font-weight:600;
 	text-transform:uppercase;
-	background:#4E98D6;
+	background-color:$main-blue;
 	color:#EEE;
 	cursor:pointer;
 	text-decoration:none;
@@ -154,7 +155,7 @@ a#wtaiu-close{
 	padding:6px 0 0 0;
 	height:34px;
 	cursor:pointer;
-	background:#C44;
+	background-color:$main-red;
 	color:#FFF;
 	text-decoration:none;
 	text-align:center;
@@ -216,14 +217,14 @@ a#wtaiu-close:hover{
 			width:auto;
 			height:auto;
 			margin:0;
-			padding:10px;
+			padding:$main-padding;
 			overflow:hidden;
 		}
 
 		.content{
 			background:#FFF;
 			line-height:1.5em;
-			border-bottom:1px solid #CCC;
+			border-bottom:1px solid $main-border-color;
 		}
 
 		.panel-header{
@@ -231,7 +232,7 @@ a#wtaiu-close:hover{
 			position:relative;
 			line-height:1;
 			border-top:1px solid #FFF;
-			border-bottom:1px solid #CCC;
+			border-bottom:1px solid $main-border-color;
 			background:#eaeaea;
 			color:#888;
 			text-shadow:1px 1px 0 #FFF;
@@ -251,7 +252,7 @@ a#wtaiu-close:hover{
 				font-family:dashicons;
 				font-size:1em;
 				cursor:pointer;
-				padding:10px;
+				padding:$main-padding;
 				line-height:1;
 				position:absolute;
 				top:-1px;
@@ -318,6 +319,7 @@ a#wtaiu-close:hover{
 		border:0;
 		margin:0;
 		padding:0;
+		color:inherit;
 
 		th,
 		td{
@@ -342,6 +344,97 @@ a#wtaiu-close:hover{
 			font-weight:bold;
 		}
 
+	}
+
+	.theme-info{
+		position:relative;
+		z-index:1;
+
+		&::after{
+			content: "";
+			clear:both;
+			display: block;
+		}
+
+		a{
+			text-decoration: none;
+			color:#000;
+			font-weight:bold;
+		}
+
+		.theme-screenshot{
+			position: relative;
+			display:block;
+			float:left;
+			width:65px;
+			height:65px;
+			background-color:$main-blue;
+			background-size:cover;
+			background-position: center center;
+			background-repeat: no-repeat;
+			margin:0 $main-padding 0 0;
+
+			@include border-radius( 2px );
+			@include box-shadow( 0 1px 1px rgba(0,0,0,.1) );
+			image-rendering: -moz-crisp-edges;
+			image-rendering: -o-crisp-edges;
+			image-rendering: -webkit-optimize-contrast;
+			image-rendering: crisp-edges;
+			-ms-interpolation-mode: nearest-neighbor;
+		}
+
+		.theme-screenshot::before{
+			content:"";
+			position:absolute; 
+			top:50%;
+			bottom:0;
+			left:4px;
+			right:4px;
+			z-index:-200;
+			@include box-shadow( 0 0 4px rgba(0,0,0,.66) );
+			@include border-radius( 150px, 10px );
+		}
+
+		.theme-info-wrap{
+			overflow:hidden;
+			line-height:1.25;
+
+			.theme-info-header{
+				text-shadow:none;
+				color:$main-color;
+				font:inherit;
+				font-weight:bold;
+				font-size:1.5em;
+				letter-spacing:normal;
+				text-transform:none;
+				margin:0;
+
+				.theme-name{
+					display: block;
+					white-space:nowrap;
+					overflow:hidden;
+					text-overflow:ellipsis;
+				}
+
+			}
+
+			p{
+				margin:5px 0 0 0;
+			}
+
+			.theme-version{
+				margin-top:0;
+				font-size:.95em;
+			}
+
+		}
+
+	}
+
+	.theme-info + .theme-info{
+		border-top:1px solid lighten( $main-border-color, 10% );
+		margin-top:$main-padding;
+		padding-top:$main-padding;
 	}
 
 }
