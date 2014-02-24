@@ -1,9 +1,9 @@
 === What Template Am I Using ===
 Contributors: webdeveric
 Tags: template, theme development, debug, server information
-Requires at least: 3.8.0
+Requires at least: 3.1.0
 Tested up to: 3.8.1
-Stable tag: 0.1.8
+Stable tag: 0.1.10
 
 This plugin is intended for theme developers to use. It shows the current template being used to render the page, current post type, and much more.
 
@@ -29,7 +29,21 @@ Information displayed:
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Visit front end of your site.
 
+
+== Screenshots ==
+
+1. The sidebar and all panels are open.
+2. You can click on the arrow to the right of each label to open or close the panel. You can also sort the panels to be in the order you want. The open status and sort order are saved to your user account.
+3. You can click the X button to remove the sidebar from the page and to not show it in the future. You can turn it back on with a checkbox on your profile page.
+
 == Changelog ==
+
+= 0.1.10 =
+* Compatibility updates for WordPress 3.1.
+
+= 0.1.9 =
+* Minor bug fix on Panel activation
+* Simplified openToggle JavaScript
 
 = 0.1.8 =
 * Added Theme panel
