@@ -95,7 +95,6 @@ html.wtaiu-closed{
 	.info-list dd{
 		margin:0 0 20px 0;
 	}
-
 }
 
 #wtaiu.open{
@@ -161,19 +160,24 @@ a#wtaiu-close{
 	text-align:center;
 	font:20px/1 dashicons;
 	-webkit-font-smoothing:antialiased;
-
 	@include border-top-left-radius(5em 2em);
 	@include box-shadow( $tab-box-shadow );
-
 }
+
 
 a#wtaiu-close:before{
 	content:"\f335";
+	opacity:.85;
 }
 
 a#wtaiu-close:hover{
 	background:#C33;
 	color:#FFF;
+
+	&:before{
+		opacity:1;
+	}
+
 }
 
 #wtaiu-data{
@@ -208,6 +212,14 @@ a#wtaiu-close:hover{
 
 	.panel{
 
+		p{
+			margin:0;
+		}
+
+		p + p{
+			margin-top:10px;
+		}
+
 		.panel-header > .label,
 		.content{
 			position:relative;
@@ -225,6 +237,17 @@ a#wtaiu-close:hover{
 			background:#FFF;
 			line-height:1.5em;
 			border-bottom:1px solid $main-border-color;
+		}
+
+		.help{
+			display: none;
+			position: relative;
+			z-index: 10;
+			margin-top: -1px;
+			background:lighten( $main-blue, 35% );
+			color:#333;
+			padding:$main-padding;
+			font-size:10px;
 		}
 
 		.panel-header{
@@ -246,6 +269,20 @@ a#wtaiu-close:hover{
 				cursor:move;
 				cursor:-moz-grab;
 				cursor:grab;
+				.help-label{
+					cursor: pointer;
+					display: inline-block;
+					vertical-align: middle;
+					width:1.25em;
+					line-height:1.25em;
+					text-align: center;
+					background:#FFF;
+					background: rgba(255,255,255,.5);
+					color:#000;
+					@include border-radius( 2em );
+					margin-left:1em;
+					font-size:1em;
+				}
 			}
 
 			.open-toggle-button{
@@ -293,7 +330,7 @@ a#wtaiu-close:hover{
 
 	.panel.closed {
 
-		.content{
+		.panel-content{
 			display:none;
 		}
 		
@@ -443,3 +480,28 @@ a#wtaiu-close:hover{
 	overflow:scroll;
 	-webkit-overflow-scrolling:touch;
 }
+
+
+#wtaiu.no-dashicons{
+
+	a#wtaiu-close:before{
+		font:16px/1 'FontAwesome';
+		content:"\f00d";
+	}
+
+	.panel{
+		.open-toggle-button:before{
+			font-family:'FontAwesome';
+			content:"\f106"; /* up arrow */
+		}
+
+		&.closed{
+			.open-toggle-button:before{
+				font-family:'FontAwesome';
+				content:"\f107"; /* up arrow */
+			}
+		}
+	}
+
+}
+	

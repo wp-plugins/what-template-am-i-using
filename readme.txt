@@ -1,9 +1,9 @@
 === What Template Am I Using ===
 Contributors: webdeveric
 Tags: template, theme development, debug, server information
-Requires at least: 3.8.0
-Tested up to: 3.8.1
-Stable tag: 0.1.8
+Requires at least: 3.1.0
+Tested up to: 4.0.0
+Stable tag: 0.1.12
 
 This plugin is intended for theme developers to use. It shows the current template being used to render the page, current post type, and much more.
 
@@ -29,13 +29,34 @@ Information displayed:
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Visit front end of your site.
 
+== Screenshots ==
+
+1. The sidebar and all panels are open.
+2. You can click on the arrow to the right of each label to open or close the panel. You can also sort the panels to be in the order you want. The open status and sort order are saved to your user account.
+3. You can click the X button to remove the sidebar from the page and to not show it in the future. You can turn it back on with a checkbox on your profile page.
+
 == Changelog ==
 
+= 0.1.12 =
+* Show all core panels now. I'm not using the debug panels right now.
+* Added PHP info panel.
+
+= 0.1.11 =
+* Updated the way I setup panels.
+* Added help text feature to panels.
+
+= 0.1.10 =
+* Compatibility updates for WordPress 3.1.
+
+= 0.1.9 =
+* Minor bug fix on Panel activation.
+* Simplified openToggle JavaScript.
+
 = 0.1.8 =
-* Added Theme panel
+* Added Theme panel.
 * Updated IP Addresses panel and Server Information panel to show if WP_DEBUG is true.
-* Updated Panel activation/deactivation hooks
-* Added filter: wtaiu_panel_can_show
+* Updated Panel activation/deactivation hooks.
+* Added filter: wtaiu_panel_can_show.
 
 = 0.1.7 =
 * Fixed PHP warning when WP_DEBUG is true.
@@ -61,13 +82,13 @@ Information displayed:
 * The data displayed is now filterable.
 
 = 0.1.3 =
-* Added server IP address
+* Added server IP address.
 
 = 0.1.2 =
-* Added is_home() and is_front_page() output to footer
+* Added is_home() and is_front_page() output to footer.
 
 = 0.1.1 =
-* Added current post type
+* Added current post type.
 
 = 0.1 =
-* Initial release
+* Initial release.
