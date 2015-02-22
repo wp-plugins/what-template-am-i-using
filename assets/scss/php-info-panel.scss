@@ -1,11 +1,9 @@
-@import "compass/css3";
-@import "compass/utilities/general/clearfix";
 @import "variables";
 
 #php-info-panel{
 
     h1,h2{
-        font:inherit;
+        font: inherit;
         text-transform: uppercase;
         font-size: 1em;
         font-weight: bold;
@@ -13,12 +11,12 @@
     }
 
     h2{
-        background:$main-blue; 
+        background: $main-blue;
         color: #FFF;
-        padding:3px;
+        padding: 3px;
         a,
         a:hover{
-            color:inherit;
+            color: inherit;
         }
     }
 
@@ -31,25 +29,25 @@
         &:first-of-type{
             text-align: center;
             .h{
-                background:transparent;
+                background: transparent;
             }
             h1.p{
-                font-size:1.75em;
+                font-size: 1.75em;
             }
         }
 
-        margin:0 0 1em 0;
-        padding:0;
-        border:0;
+        margin: 0 0 1em 0;
+        padding: 0;
+        border: 0;
         border-collapse: collapse;
 
-        width:100%;
-        @include box-sizing(border-box);
+        width: 100%;
+        box-sizing: border-box;
 
-        font-size:.9em;
+        font-size: .9em;
 
         tr.h{
-            background:rgba(0,0,0,.066);
+            background: rgba(0,0,0,.066);
         }
 
         td,
@@ -60,8 +58,8 @@
         td:first-child:nth-last-child(2),
         td:last-child:nth-child(2){
             display: block;
-            margin:0;
-            padding:0;
+            margin: 0;
+            padding: 0;
         }
 
         .e{
@@ -69,7 +67,7 @@
         }
 
         td:last-child:nth-child(2).v{
-            margin-bottom:.5em;
+            margin-bottom: .5em;
         }
 
     }

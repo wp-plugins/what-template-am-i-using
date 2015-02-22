@@ -6,33 +6,7 @@ Plugin Group: Utilities
 Author: Eric King
 Author URI: http://webdeveric.com/
 Description: This plugin is intended for theme developers to use. It shows the current template being used to render the page, current post type, and much more.
-Version: 0.1.13
-
-----------------------------------------------------------------------------------------------------
-
-If you want to add your own information to the sidebar panel, you just need to create a class that
-extends WTAIU_Panel.
-
-Take a look at inc/core-panels.php for examples.
-
-----------------------------------------------------------------------------------------------------
-
-Here is how you can filter the handle text.
-
-add_filter('wtaiu_handle_text', function( $text ) {
-    return 'Your Custom Text Here';
-} );
-
-----------------------------------------------------------------------------------------------------
-
-Here is a simple example to show you how to use the wtaiu_panel_can_show filter.
-
-function wtaiu_can_show( $can_show, WTAIU_Panel $panel ) {
-    if ( is_a( $panel, 'WTAIU_Theme_Panel') )
-        return false;
-    return $can_show;
-}
-add_filter('wtaiu_panel_can_show', 'wtaiu_can_show', 10, 2 );
+Version: 0.2.0
 
 ----------------------------------------------------------------------------------------------------
 
@@ -41,6 +15,7 @@ add_filter('wtaiu_panel_can_show', 'wtaiu_can_show', 10, 2 );
 
     Refactor this plugin for testability.
     Don't include any files until wp_loaded action is called and after you check the user and is_admin().
+
 */
 
 include __DIR__ . '/inc/PriorityQueueInsertionOrder.php';
@@ -49,7 +24,7 @@ include __DIR__ . '/inc/core-panels.php';
 
 class What_Template_Am_I_Using
 {
-    const VERSION = '0.1.13';
+    const VERSION = '0.2.0';
     const FILE = __FILE__;
 
     protected static $panels;
@@ -100,6 +75,8 @@ class What_Template_Am_I_Using
 
     public static function setup()
     {
+        load_plugin_textdomain( 'wtaiu', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
         if ( ! is_admin() && current_user_can( 'edit_theme_options' ) ) {
             $user = wp_get_current_user();
             if ( $user->wtaiu_show_sidebar == '1' ) {
@@ -181,11 +158,11 @@ class What_Template_Am_I_Using
             return;
     ?>
         <tr>
-            <th scope="row"><?php _e('<abbr title="What Template Am I Using?">WTAIU</abbr> Sidebar')?></th>
+            <th scope="row"><?php _e('<abbr title="What Template Am I Using?">WTAIU</abbr> Sidebar', 'wtaiu')?></th>
             <td>
                 <fieldset>
                     <legend class="screen-reader-text">Sidebar</legend>
-                    <label for="wtaiu_show_sidebar"><input type="checkbox" name="wtaiu_show_sidebar" id="wtaiu_show_sidebar" value="1" <?php checked('1', $user->wtaiu_show_sidebar ); ?> /> <?php _e('Show the sidebar when viewing site'); ?></label>
+                    <label for="wtaiu_show_sidebar"><input type="checkbox" name="wtaiu_show_sidebar" id="wtaiu_show_sidebar" value="1" <?php checked('1', $user->wtaiu_show_sidebar ); ?> /> <?php _e('Show the sidebar when viewing site', 'wtaiu'); ?></label>
                 </fieldset>
             </td>
         </tr>
@@ -244,21 +221,22 @@ class What_Template_Am_I_Using
         $css_reqs = array('open-sans');
         if ( version_compare( $wp_version, '3.8', '<' ) ) {
             wp_enqueue_style( 'open-sans', '//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,300,400,600', array(), self::VERSION );
-            wp_enqueue_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css', array(), self::VERSION );            
+            wp_enqueue_style( 'font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css', array(), self::VERSION );
             $css_reqs[] = 'font-awesome';
         } else {
             $css_reqs[] = 'dashicons';
         }
-        
-        wp_enqueue_style( 'wtaiu', plugins_url('/css/dist/main.min.css', __FILE__), $css_reqs, self::VERSION );
-        wp_enqueue_script( 'opentoggle', plugins_url('/js/dist/jquery-opentoggle.min.js', __FILE__), array( 'jquery', 'jquery-ui-sortable' ), self::VERSION );
-        wp_enqueue_script( 'wtaiu', plugins_url('/js/dist/main.min.js', __FILE__), array( 'jquery', 'opentoggle' ), self::VERSION );
+
+        wp_enqueue_style( 'wtaiu', plugins_url('/assets/css/main.css', __FILE__), $css_reqs, self::VERSION );
+        wp_enqueue_script( 'wtaiu', plugins_url('/assets/js/main.min.js', __FILE__), array( 'jquery', 'jquery-ui-sortable' ), self::VERSION );
 
         self::$user_data = get_user_option( 'wtaiu_sidebar_data', get_current_user_id() );
 
         wp_localize_script( 'wtaiu', 'wtaiu', array(
             'ajaxurl' => admin_url( 'admin-ajax.php' ),
-            'data' => self::$user_data
+            'data' => self::$user_data,
+            'remove_sidebar_alert1' => __('Are you sure you want to remove the sidebar?', 'wtaiu'),
+            'remove_sidebar_alert2' => __('The sidebar can be enabled again from your user profile page.', 'wtaiu')
         ) );
     }
 
@@ -280,7 +258,7 @@ class What_Template_Am_I_Using
             $label   = $panel->get_label();
             $content = $panel->get_content();
             $id      = $panel->get_id();
-            
+
             $extra_class = '';
 
             if ( isset( $user_panels[ $id ] ) ) {
@@ -314,20 +292,20 @@ class What_Template_Am_I_Using
 
         ?>
         <div id="wtaiu" class="<?php if ( $sidebar_open ) {echo 'open ';} echo $dashicons_class; ?>">
-            <a id="wtaiu-handle" title="Click to toggle"><span><?php echo apply_filters('wtaiu_handle_text', 'What Template Am I Using?' ); ?></span></a>
-            <a id="wtaiu-close" title="Click to remove from page"></a>
+            <a id="wtaiu-handle" title="<?php _e('Click to toggle', 'wtaiu'); ?>"><span><?php echo apply_filters('wtaiu_handle_text', __('What Template Am I Using?', 'wtaiu') ); ?></span></a>
+            <a id="wtaiu-close" title="<?php _e('Click to remove from page', 'wtaiu'); ?>"></a>
 
             <menu type="context" id="wtaiu-context-menu">
                 <menuitem
                     type="command"
-                    icon="<?php echo plugins_url( '/imgs/up-arrow.png', __FILE__ ); ?>"
-                    label="Close all panels"
+                    icon="<?php echo plugins_url( '/assets/imgs/up-arrow.png', __FILE__ ); ?>"
+                    label="<?php _e('Close all panels', 'wtaiu'); ?>"
                     class="close-all"
                 ></menuitem>
                 <menuitem
                     type="command"
-                    icon="<?php echo plugins_url( '/imgs/down-arrow.png', __FILE__ ); ?>"
-                    label="Open all panels"
+                    icon="<?php echo plugins_url( '/assets/imgs/down-arrow.png', __FILE__ ); ?>"
+                    label="<?php _e('Open all panels', 'wtaiu'); ?>"
                     class="open-all"
                 ></menuitem>
             </menu>
